@@ -92,6 +92,16 @@ describe('multi-libs', function() {
     });
   });
 
+  describe('player leaves during the game', function() {
+    beforeEach(startGame);
+
+    it('should have 3 players when first player leaves', function() {
+      expect(currentGame.players.length).toBe(4);
+      Game.departGame(gameId, currentGame.players[0].id);
+      expect(currentGame.players.length).toBe(3);
+    });
+  });
+
   describe('round', function() {
     beforeEach(startGame);
 
@@ -207,8 +217,9 @@ describe('multi-libs', function() {
                       expect(p.awesomePoints).toBe(0);
                   })
               });
-          })
+          });
 
       });
   });
+
 });
