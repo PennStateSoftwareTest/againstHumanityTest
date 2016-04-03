@@ -92,6 +92,7 @@ describe('multi-libs', function() {
     });
   });
 
+
   describe('player leaves during the game', function() {
     beforeEach(startGame);
 
@@ -99,6 +100,28 @@ describe('multi-libs', function() {
       expect(currentGame.players.length).toBe(4);
       Game.departGame(gameId, currentGame.players[0].id);
       expect(currentGame.players.length).toBe(3);
+    });
+  });
+
+  describe('All four players leave the game', function() {
+    beforeEach(startGame);
+
+    it('should remove the current game from the array of gameList', function() {
+      expect(currentGame.players.length).toBe(4);
+      var AvailableGames = Game.listAll();
+      expect(AvailableGames.length).toBe(1);
+    //expect(Game.list()[0].id).toBe(gameId);
+      //var thisGameIDIndex = AvailableGamesArray.indexOf(currentGame.gameId);
+
+      //expect(currentGame.gameList.indexOf(currentGame.gameId)).toBe(0);
+      Game.departGame(gameId, currentGame.players[3].id);
+      Game.departGame(gameId, currentGame.players[2].id);
+      Game.departGame(gameId, currentGame.players[1].id);
+      Game.departGame(gameId, currentGame.players[0].id);
+      var AvailableGames2 = Game.listAll();
+      expect(AvailableGames2.length).toBe(0);
+      //expect(Game.list()[0].id).toNotBe(gameId);
+      //expect(currentGame.gameList.indexOf(currentGame.gameId)).toBe(-1);
     });
   });
 
