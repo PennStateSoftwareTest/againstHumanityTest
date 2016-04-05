@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var Game = require('../game.js')
+var Game = require('../game.js');
 
 describe('multi-libs', function() {
   var playerList = [
@@ -14,18 +14,18 @@ describe('multi-libs', function() {
   function createGame() {
     Game.addGame({ id: gameId, name: "some game" });
     currentGame = Game.getGame(gameId);
-  };
+  }
 
   function joinCurrentGame(playerId) {
     Game.joinGame(currentGame, { id: playerId, name: playerId });
-  };
+  }
 
   function playCard(playerId) {
     var player = _.findWhere(currentGame.players, { id: playerId });
     expect(player.isCzar).toBe(false);
     Game.selectCard(currentGame.id, playerId, player.cards[0]);
     currentGame = Game.getGame(gameId);
-  };
+  }
 
   function allPlayersButCzarPlayCard() {
       _.map(playerList, function(p) {
@@ -34,13 +34,19 @@ describe('multi-libs', function() {
               playCard(p);
           }
       });
-  };
+  }
 
   function getFirstNonCzar(game) {
       return _.find(currentGame.players, function(p) {
           return p.isCzar === false;
       })
-  };
+  }
+
+  function getCardCzar(game) {
+    return _.find(game.players, function(p) {
+      return p.isCzar === true;
+    })
+  }
 
   function startGame() {
     createGame();
@@ -48,7 +54,7 @@ describe('multi-libs', function() {
       joinCurrentGame(p);
     });
     currentGame = Game.getGame(gameId);
-  };
+  }
 
   beforeEach(Game.reset);
 
@@ -198,6 +204,72 @@ describe('multi-libs', function() {
     });
   });
 
+  describe('Verify the search of a random game returns undefined', function() {
+    beforeEach(function(){
+      Game.addGame({ id: "0000-1111-2222-3333", name: "Test Game 1" });
+      Game.addGame({ id: "1111-2222-3333-4444", name: "Test Game 2" });
+      Game.addGame({ id: "2222-3333-4444-5555", name: "Test Game 3" });
+      Game.addGame({ id: "3333-4444-5555-6666", name: "Test Game 4" });
+    });
+    var randomGameId = "foo";
+    it("Should return undefined when searching for a random value", function(){
+      expect(Game.getGame(randomGameId)).toBe(undefined);
+    })
+  });
+
+  describe('Verify the search of an existing game returns the game object', function(){
+    beforeEach(function(){
+      Game.addGame({ id: "0000-1111-2222-3333", name: "Test Game 1" });
+      Game.addGame({ id: "1111-2222-3333-4444", name: "Test Game 2" });
+      Game.addGame({ id: "2222-3333-4444-5555", name: "Test Game 3" });
+      Game.addGame({ id: "3333-4444-5555-6666", name: "Test Game 4" });
+    });
+    it('Should return the game object after the creation of the game', function() {
+      var testGame2 = Game.getGame("1111-2222-3333-4444");
+      expect(testGame2.id === "1111-2222-3333-4444").toBe(true);
+    });
+  });
+
+  describe("Verify that the first player to join the game becomes the card czar", function() {
+    var playerId= "bart-100";
+    var playerName = "Bart";
+    var newGame = {};
+    beforeEach(function() {
+      newGame = Game.addGame({ id: "0000-1111-2222-3333", name: "Test Game 1" });
+      // Creating the first player with a unique name
+      Game.joinGame(newGame, { id: playerId, name: playerName });
+      // Creating the remaining players to start up a game
+      for (var i = 0; i < 3; i++) {
+        Game.joinGame(newGame, { id: "newPlayer-" + (100 + i), name: "newPlayer-" + i });
+      }
+    });
+
+    it('Should return with the first player becoming the card czar', function() {
+      var player = _.findWhere(newGame.players, { id: playerId });
+      expect(player.isCzar).toBe(true);
+    });
+
+    it('Should have the correct number of cards in the players hand', function() {
+      var player = _.findWhere(newGame.players, { id: playerId });
+      expect(player.cards.length).toBe(7);
+    });
+  });
+
+  describe("Verify that after the card czar leaves that one is not immediately selected and that only after a new player comes that one is selected", function() {
+    beforeEach(startGame);
+    it('The card czar leaves the game', function() {
+      var cardCzar = getCardCzar(currentGame);
+      Game.departGame(currentGame.id, cardCzar.id);
+      expect(Game.getPlayer(currentGame.id, cardCzar.id)).toBe(undefined);
+      expect(getCardCzar(currentGame)).toBe(undefined);
+    });
+
+    it('The new user should trigger a new card czar to be selected', function() {
+      var cardCzar = getCardCzar(currentGame);
+      Game.joinGame(currentGame, { id: "bart-100", name: "Bart Simpson" });
+      expect(getCardCzar(currentGame).isCzar).toBe(true);
+    });
+  });
 
   describe('fullGame', function() {
       beforeEach(startGame);
