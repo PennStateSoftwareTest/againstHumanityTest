@@ -4,27 +4,26 @@
   "description": "Cards Against Humanities implemented in NodeJS",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "istanbul cover jasmine-node spec/describe_Game_spec.js"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/amirrajan/nodejs-against-humanity.git"
+    "url": "git://github.com/PennStateSoftwareTest/againstHumanityTest.git"
   },
   "dependencies": {
-    "express": "~3.4.4",
-    "ejs": "~0.8.3",
-    "jasmine-node": "~1.11.0",
-    "underscore": "~1.4.2",
-    "socket.io": "~0.9.11",
     "backbone": "~1.1.2",
-    "qs": "~0.6.5",
+    "ejs": "^2.5.7",
+    "express": "~3.4.4",
+    "istanbul": "^0.4.2",
+    "jasmine-node": "~1.11.0",
     "oauth": "~0.9.10",
+    "qs": "~0.6.5",
     "redis": "~0.8.4",
     "redis-url": "0.3.1",
-    "request": "~2.27.0"
+    "request": "~2.27.0",
+    "socket.io": "~0.9.11",
+    "underscore": "~1.4.2"
   },
-  "subdomain": "nah-amir-rajan",
-  "engines": {
-    "node": "0.10.x"
-  }
+  "devDependencies": {}
 }

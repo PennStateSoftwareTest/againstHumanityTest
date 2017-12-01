@@ -1,0 +1,8 @@
+1. Install istanbul with npm
+  npm install --save istanbul
+2. Updated package.json so I could run "npm test"
+  Add to "scripts" section, istanbul calls jasmin-node to run the tests
+3. Ran tests the first time to see coverage
+  Noticed no test coverage for the departGame function
+4. Added a test for if one player leaves the game
+  Noticed increase in test coverage with new test

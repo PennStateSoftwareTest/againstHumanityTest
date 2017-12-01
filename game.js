@@ -55,7 +55,15 @@ function addGame(game) {
 }
 
 function getGame(gameId) {
-    return _.find(gameList, function(x) { return x.id === gameId; }) || undefined;
+  var retGame = undefined;
+  for (var i = 0, len = gameList.length; i < len; i++) {
+    if (gameList[i].id === gameId) {
+      retGame = gameList[i];
+      break;
+    }
+  }
+  return retGame;
+  //return _.find(gameList, function(x) { return x.id === gameId; }) || undefined;
 }
 
 function joinGame(game, player) {
